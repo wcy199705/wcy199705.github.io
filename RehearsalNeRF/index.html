@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="RehearsalNeRF: Decoupling Intrinsic Neural Fields of Dynamic Illuminations for Scene Editing">
+  <meta name="keywords" content="NeRF, Neural Radiance Fields, Illumination, Scene Editing, K-pop">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RehearsalNeRF</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+
+<!-- ===== Hero ===== -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">RehearsalNeRF: Decoupling Intrinsic Neural Fields of Dynamic Illuminations for Scene Editing</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Changyeon Won<sup>1*</sup>,</span>
+            <span class="author-block">Hyunjun Jung<sup>1*</sup>,</span>
+            <span class="author-block">Jungu Cho<sup>1,3</sup>,</span>
+            <span class="author-block">Seonmi Park<sup>1</sup>,</span>
+            <span class="author-block">Chi-Hoon Lee<sup>3</sup>,</span>
+            <span class="author-block">Hae-Gon Jeon<sup>2&dagger;</sup></span>
+          </div>
+
+          <div class="is-size-6 publication-authors">
+            <span class="author-block"><sup>1</sup>Gwangju Institute of Science and Technology,</span>
+            <span class="author-block"><sup>2</sup>Yonsei University,</span>
+            <span class="author-block"><sup>3</sup>CJ Corporation</span>
+          </div>
+          <div class="is-size-6 publication-authors" style="margin-top: 5px;">
+            <span class="author-block"><sup>*</sup>Equal contribution, <sup>&dagger;</sup>Corresponding author</span>
+
+          </div>
+
+          <div class="is-size-3 publication-authors" style="margin-top: 10px;">
+            <span class="author-block"><b>IJCV 2026</b></span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- Paper Link -->
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2603.27948"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- PDF Link -->
+              <span class="link-block">
+                <a href="./static/pdfs/rehearsalnerf.pdf"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <!-- Code Link -->
+              <span class="link-block">
+                <a href="https://github.com/wcy199705/RehearsalNeRF"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Code</span>
+                </a>
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== Concept Videos ===== -->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body" style="padding-top: 10px;">
+      <!-- Input -->
+      <div class="columns is-centered">
+        <div class="column is-half has-text-centered">
+          <h4 class="title is-5">Main Stage</h4>
+          <video autoplay controls muted loop playsinline style="width: 100%; border-radius: 10px;">
+            <source src="./static/videos/main_input.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column is-half has-text-centered">
+          <h4 class="title is-5">Rehearsal Stage</h4>
+          <video autoplay controls muted loop playsinline style="width: 100%; border-radius: 10px;">
+            <source src="./static/videos/rehearsal.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+      <!-- Arrow -->
+      <div class="has-text-centered" style="font-size: 2rem; margin: 10px 0;">&#8595;</div>
+      <!-- Output -->
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h4 class="title is-5">Static Objects</h4>
+          <img src="./static/images/static_frame0.png" alt="Static Objects" style="width: 100%; border-radius: 10px;">
+        </div>
+        <div class="column has-text-centered">
+          <h4 class="title is-5">Dynamic Objects</h4>
+          <video autoplay controls muted loop playsinline style="width: 100%; border-radius: 10px;">
+            <source src="./static/videos/decouple_dynamic.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column has-text-centered">
+          <h4 class="title is-5">Dynamic Illumination</h4>
+          <video autoplay controls muted loop playsinline style="width: 100%; border-radius: 10px;">
+            <source src="./static/videos/decouple_illumination.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+      <h2 class="subtitle has-text-centered" style="margin-top: 15px;">
+        <span class="dnerf">RehearsalNeRF</span> decomposes scenes into static objects, dynamic objects, and dynamic illumination, enabling independent control of each component.
+      </h2>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== Abstract ===== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Although there has been significant progress in neural radiance fields, an issue on dynamic illumination changes still remains unsolved. Different from relevant works that parameterize time-variant/-invariant components in scenes, subjects' radiance is highly entangled with their own emitted radiance and lighting colors in spatio-temporal domain. In this paper, we present a new effective method to learn disentangled neural fields under the severe illumination changes, named <i>RehearsalNeRF</i>. Our key idea is to leverage scenes captured under stable lighting like rehearsal stages, easily taken before dynamic illumination occurs, to enforce geometric consistency between the different lighting conditions. In particular, RehearsalNeRF employs a learnable vector for lighting effects which represents illumination colors in a temporal dimension and is used to disentangle projected light colors from scene radiance. Furthermore, our RehearsalNeRF is also able to reconstruct the neural fields of dynamic objects by simply adopting off-the-shelf interactive masks. To decouple the dynamic objects, we propose a new regularization leveraging optical flow, which provides coarse supervision for the color disentanglement. We demonstrate the effectiveness of RehearsalNeRF by showing robust performances on novel view synthesis and scene editing under dynamic illumination conditions.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+<!-- ===== Method Overview ===== -->
+<section class="section" style="padding-top: 0;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Method</h2>
+        <div class="content has-text-justified">
+          <p>
+            RehearsalNeRF decomposes scenes into three independent neural fields:
+            <b>Static Field (S)</b> for time-invariant geometry,
+            <b>Dynamic Field (D)</b> for space-time motion, and
+            <b>Lightning Field (L)</b> for illumination and hue conditioning.
+            These fields are composed via BRDF interaction and tone mapping to produce the final rendering.
+          </p>
+        </div>
+        <img src="./static/images/overview.png" alt="Method Overview" style="width: 100%;">
+
+        <h3 class="title is-4" style="margin-top: 30px;">Learning Illumination Vector</h3>
+        <div class="content has-text-justified">
+          <p>
+            (a) The illumination vector <i>v<sub>h</sub></i> is initialized by selecting top-<i>k</i> hue candidates from the difference between main stage and rehearsal stage frames via k-means clustering in HSV space.
+            (b) During training, the lighting field &psi;<sub>L</sub> predicts a probability vector <b>P</b><sub>H</sub> at each timestep &tau;, which is multiplied with <i>v<sub>h</sub></i> to produce the illumination color. The illumination vector is jointly optimized through back-propagation by matching the color of decoupled dynamic objects with the rehearsal prior.
+          </p>
+        </div>
+        <img src="./static/images/method-detail.png" alt="Learning Illumination Vector" style="width: 100%;">
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== Dataset Examples ===== -->
+<section class="hero is-light is-small">
+  <div class="hero-body">
+    <h2 class="title is-3 has-text-centered">Dataset: Main &amp; Rehearsal</h2>
+    <p class="has-text-centered" style="margin-bottom: 20px;">
+      Each scene consists of a main stage video (dynamic lighting, left) and a rehearsal video (stable lighting, right).
+    </p>
+    <div class="container is-max-widescreen">
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item">
+          <video poster="" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/scene1_combined.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="item">
+          <video poster="" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/scene2_combined.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="item">
+          <video poster="" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/scene6_combined.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="item">
+          <video poster="" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/scene16_combined.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="item">
+          <video poster="" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/jung_combined.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="item">
+          <video poster="" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/LED_combined.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== Applications ===== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Applications</h2>
+
+    <!-- Novel View Synthesis -->
+    <h3 class="title is-4 has-text-centered">Novel View Synthesis</h3>
+  </div>
+
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <div id="nvs-carousel" class="carousel results-carousel">
+          <div class="item">
+            <video poster="" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/selected/render_only/scene01_render_only.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item">
+            <video poster="" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/selected/render_only/scene03_render_only.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item">
+            <video poster="" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/selected/render_only/scene06_render_only.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item">
+            <video poster="" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/selected/render_only/scene16_render_only.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item">
+            <video poster="" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/selected/render_only/scene19_render_only.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Time Control (Frozen Motion) -->
+  <div class="container is-max-desktop" style="margin-top: 30px;">
+    <h3 class="title is-4 has-text-centered">Time Control (Frozen Motion)</h3>
+    <p class="content has-text-centered" style="margin-bottom: 15px;">
+      RehearsalNeRF allows independent time control over lighting and motion.
+    </p>
+  </div>
+
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <div id="frozen-carousel" class="carousel results-carousel">
+          <div class="item">
+            <video poster="" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/selected/frozen_motion_000/scene01_step120000_frozen_motion_000.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item">
+            <video poster="" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/selected/frozen_motion_000/scene02_step120000_frozen_motion_000.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item">
+            <video poster="" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/selected/frozen_motion_000/scene05_step120000_frozen_motion_000.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item">
+            <video poster="" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/selected/frozen_motion_000/scene06_step120000_frozen_motion_000.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item">
+            <video poster="" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/selected/frozen_motion_000/scene15_step120000_frozen_motion_000.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Intensity Change -->
+  <div class="container is-max-desktop" style="margin-top: 30px;">
+    <div class="has-text-centered">
+      <h3 class="title is-4">Intensity Change</h3>
+      <p class="content has-text-centered" style="margin-bottom: 15px;">
+        RehearsalNeRF supports spatially varying intensity control, adjusting the brightness of the rendered image.
+      </p>
+    </div>
+  </div>
+
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <div id="intensity-carousel" class="carousel results-carousel">
+          <div class="item">
+            <video poster="" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/selected/intensity_lr_p20/scene01_intensity_lr_p20.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item">
+            <video poster="" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/selected/intensity_lr_p20/scene02_intensity_lr_p20.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item">
+            <video poster="" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/selected/intensity_lr_p20/scene03_intensity_lr_p20.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item">
+            <video poster="" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/selected/intensity_lr_p20/scene05_intensity_lr_p20.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item">
+            <video poster="" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/selected/intensity_lr_p20/scene06_intensity_lr_p20.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Color Change -->
+  <div class="container is-max-desktop" style="margin-top: 30px;">
+
+    <h3 class="title is-4 has-text-centered">Color Change</h3>
+    <p class="content has-text-centered" style="margin-bottom: 15px;">
+      By modifying the illumination vector, RehearsalNeRF can change the lighting color of the scene.
+    </p>
+
+    <!-- Scene Tabs -->
+    <div class="has-text-centered" style="margin-bottom: 15px;">
+      <div class="buttons is-centered" id="scene-buttons">
+        <button class="button is-dark is-selected" onclick="selectScene('01')">Scene 1</button>
+        <button class="button is-light" onclick="selectScene('02')">Scene 2</button>
+        <button class="button is-light" onclick="selectScene('03')">Scene 3</button>
+        <button class="button is-light" onclick="selectScene('05')">Scene 4</button>
+        <button class="button is-light" onclick="selectScene('06')">Scene 5</button>
+        <button class="button is-light" onclick="selectScene('16')">Scene 6</button>
+        <button class="button is-light" onclick="selectScene('19')">Scene 7</button>
+      </div>
+    </div>
+
+    <!-- Hue Color Buttons -->
+    <div class="has-text-centered" style="margin-bottom: 20px;">
+      <div class="buttons is-centered" id="hue-buttons">
+        <button class="button is-selected" style="background-color: #555; color: white; border: 3px solid #333; font-weight: bold;" onclick="selectHue('original')">Original</button>
+        <button class="button" style="background-color: hsl(0,100%,50%); color: white; font-weight: bold;" onclick="selectHue('000')">Red</button>
+        <button class="button" style="background-color: hsl(60,100%,45%); color: white; font-weight: bold;" onclick="selectHue('060')">Yellow</button>
+        <button class="button" style="background-color: hsl(120,100%,35%); color: white; font-weight: bold;" onclick="selectHue('120')">Green</button>
+        <button class="button" style="background-color: hsl(180,100%,35%); color: white; font-weight: bold;" onclick="selectHue('180')">Cyan</button>
+        <button class="button" style="background-color: hsl(240,100%,50%); color: white; font-weight: bold;" onclick="selectHue('240')">Blue</button>
+        <button class="button" style="background-color: hsl(300,100%,40%); color: white; font-weight: bold;" onclick="selectHue('300')">Purple</button>
+      </div>
+    </div>
+
+    <!-- Video Player -->
+    <div class="columns is-centered">
+      <div class="column is-four-fifths has-text-centered">
+        <video id="hue-video" autoplay controls muted loop playsinline style="width: 100%; border-radius: 10px;">
+          <source id="hue-video-src" src="./static/videos/selected/original/scene01_original.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+
+    <script>
+      var currentScene = '01';
+      var currentHue = 'original';
+
+      function selectScene(scene) {
+        currentScene = scene;
+        updateHueVideo();
+        document.querySelectorAll('#scene-buttons .button').forEach(function(btn) {
+          btn.classList.remove('is-dark');
+          btn.classList.add('is-light');
+        });
+        event.target.classList.remove('is-light');
+        event.target.classList.add('is-dark');
+      }
+
+      function selectHue(hue) {
+        currentHue = hue;
+        updateHueVideo();
+        document.querySelectorAll('#hue-buttons .button').forEach(function(btn) {
+          btn.style.border = 'none';
+        });
+        event.target.style.border = '3px solid #333';
+      }
+
+      function updateHueVideo() {
+        var video = document.getElementById('hue-video');
+        var src;
+        if (currentHue === 'original') {
+          src = './static/videos/selected/original/scene' + currentScene + '_original.mp4';
+        } else {
+          src = './static/videos/selected/hue/scene' + currentScene + '_step120000_hue_' + currentHue + '.mp4';
+        }
+        video.src = src;
+        video.load();
+        video.play();
+      }
+    </script>
+
+  </div>
+</section>
+
+
+<!-- ===== Comparisons ===== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Comparisons</h2>
+
+    <!-- Quantitative Results Table -->
+    <div class="columns is-centered">
+      <div class="column">
+        <h3 class="title is-4 has-text-centered">Quantitative Results</h3>
+        <p class="content has-text-justified" style="margin-bottom: 15px;">
+          Novel view synthesis performance on our real-world dataset. We compare results from the original dataset and the temporally subsampled version (every 5th frame) to evaluate robustness against rapid scene dynamics.
+        </p>
+        <div class="table-container">
+          <table class="table is-bordered is-striped is-hoverable is-fullwidth" style="font-size: 0.9em;">
+            <thead>
+              <tr>
+                <th rowspan="2">Method</th>
+                <th colspan="3" class="has-text-centered">Original Dataset</th>
+                <th colspan="3" class="has-text-centered">Subsampled Dataset (5x Speed)</th>
+              </tr>
+              <tr>
+                <th class="has-text-centered">Full PSNR&uarr;</th>
+                <th class="has-text-centered">Dynamic PSNR&uarr;</th>
+                <th class="has-text-centered">Objects SSIM&uarr;</th>
+                <th class="has-text-centered">Full PSNR&uarr;</th>
+                <th class="has-text-centered">Dynamic PSNR&uarr;</th>
+                <th class="has-text-centered">Objects SSIM&uarr;</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>D<sup>2</sup>NeRF</td>
+                <td class="has-text-centered"><b>29.776</b></td>
+                <td class="has-text-centered">22.962</td>
+                <td class="has-text-centered">0.978</td>
+                <td class="has-text-centered">28.274</td>
+                <td class="has-text-centered">21.899</td>
+                <td class="has-text-centered">0.976</td>
+              </tr>
+              <tr>
+                <td>K-Planes</td>
+                <td class="has-text-centered">28.113</td>
+                <td class="has-text-centered"><u>25.122</u></td>
+                <td class="has-text-centered">0.981</td>
+                <td class="has-text-centered">27.849</td>
+                <td class="has-text-centered"><u>25.784</u></td>
+                <td class="has-text-centered"><u>0.986</u></td>
+              </tr>
+              <tr>
+                <td>TensoIR PBR</td>
+                <td class="has-text-centered">18.681</td>
+                <td class="has-text-centered">16.934</td>
+                <td class="has-text-centered">0.972</td>
+                <td class="has-text-centered">16.955</td>
+                <td class="has-text-centered">15.347</td>
+                <td class="has-text-centered">0.971</td>
+              </tr>
+              <tr>
+                <td>TensoIR VR</td>
+                <td class="has-text-centered"><u>28.663</u></td>
+                <td class="has-text-centered">21.918</td>
+                <td class="has-text-centered">0.978</td>
+                <td class="has-text-centered"><u>28.389</u></td>
+                <td class="has-text-centered">23.238</td>
+                <td class="has-text-centered">0.981</td>
+              </tr>
+              <tr>
+                <td>4DGaussian</td>
+                <td class="has-text-centered">28.199</td>
+                <td class="has-text-centered">24.523</td>
+                <td class="has-text-centered"><u>0.984</u></td>
+                <td class="has-text-centered">28.189</td>
+                <td class="has-text-centered">24.245</td>
+                <td class="has-text-centered">0.983</td>
+              </tr>
+              <tr style="background-color: #f0f7ff;">
+                <td style="font-weight: bold;">Ours</td>
+                <td class="has-text-centered" style="font-weight: normal;">28.250</td>
+                <td class="has-text-centered"><b>26.318</b></td>
+                <td class="has-text-centered"><b>0.986</b></td>
+                <td class="has-text-centered"><b>28.666</b></td>
+                <td class="has-text-centered"><b>27.090</b></td>
+                <td class="has-text-centered"><b>0.988</b></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Qualitative: Scene Editing & Decomposition -->
+    <div class="columns is-centered has-text-centered" style="margin-top: 30px;">
+      <div class="column">
+        <h3 class="title is-4">Comparison with Previous Works: Scene Editing &amp; Decomposition</h3>
+        <p class="content has-text-justified">
+          The goal of scene editing is to render the red-colored illumination. Only our method produces the high-quality edited scenes through the successful dynamic illumination decomposition.
+        </p>
+        <img src="./static/images/novel_view_syn.png" alt="Qualitative comparison of scene editing and decomposition" style="width: 100%; border-radius: 10px;">
+      </div>
+    </div>
+
+    <!-- Qualitative: Dynamic Objects (5-frame) -->
+    <div class="columns is-centered has-text-centered" style="margin-top: 30px;">
+      <div class="column">
+        <h3 class="title is-4">Qualitative Comparison: Novel View Synthesis</h3>
+        <p class="content has-text-justified">
+          Comparison of novel view synthesis performance for dynamic objects across methods.
+        </p>
+        <img src="./static/images/dynamic_5frame_ppt.png" alt="Dynamic objects comparison across 5 frames" style="width: 100%; border-radius: 10px;">
+      </div>
+    </div>
+
+    <!-- Dynamic Region Quality -->
+    <div class="columns is-centered has-text-centered" style="margin-top: 30px;">
+      <div class="column">
+        <h3 class="title is-4">Dynamic Region Quality</h3>
+        <p class="content has-text-justified">
+          Error map comparison for dynamic regions. Our model consistently achieves superior quality with the lowest error in dynamic regions.
+        </p>
+        <img src="./static/images/dynamic_region_quality.png" alt="Dynamic region quality comparison with error maps" style="width: 100%; border-radius: 10px;">
+      </div>
+    </div>
+
+    <!-- Generated Rehearsal -->
+    <div class="columns is-centered has-text-centered" style="margin-top: 30px;">
+      <div class="column">
+        <h3 class="title is-4">Without Rehearsal Prior</h3>
+        <p class="content has-text-justified">
+          Without rehearsal stage videos, our pipeline enables scene editing by generating the rehearsal prior. <b>(Nano banana is used)</b>
+        </p>
+        <img src="./static/images/generated_rehearsal.png" alt="Generated rehearsal prior pipeline" style="width: 100%; border-radius: 10px;">
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ===== BibTeX ===== -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{won2026rehearsalnerf,
+  title={RehearsalNeRF: Decoupling Intrinsic Neural Fields of Dynamic Illuminations for Scene Editing},
+  author={Won, Changyeon and Jung, Hyunjun and Cho, Jungu and Park, Seonmi and Lee, Chi-Hoon and Jeon, Hae-Gon},
+  journal={International Journal of Computer Vision},
+  volume={134},
+  number={6},
+  pages={257},
+  year={2026},
+  publisher={Springer}
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            The website template is borrowed from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
