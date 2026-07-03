@@ -209,7 +209,7 @@
     <h2 class="title is-3 has-text-centered">Applications</h2>
 
     <!-- Novel View Synthesis -->
-    <h3 class="title is-4 has-text-centered">Novel View Synthesis</h3>
+    <h3 class="title is-4 has-text-centered" style="margin-bottom: 20px;">Novel View Synthesis</h3>
   </div>
 
   <div class="container is-max-desktop">
@@ -246,41 +246,51 @@
     </div>
   </div>
 
-  <!-- Time Control (Frozen Motion) -->
+  <!-- Scene Decomposition -->
   <div class="container is-max-desktop" style="margin-top: 30px;">
-    <h3 class="title is-4 has-text-centered">Time Control (Frozen Motion)</h3>
+    <h3 class="title is-4 has-text-centered">Scene Decomposition</h3>
     <p class="content has-text-centered" style="margin-bottom: 15px;">
-      RehearsalNeRF allows independent time control over lighting and motion.
+      RehearsalNeRF decomposes each scene into its constituent components: ground truth (top-left), dynamic illumination (top-right), dynamic objects (bottom-left), and static objects (bottom-right).
     </p>
   </div>
 
   <div class="container is-max-desktop">
     <div class="columns is-centered">
       <div class="column is-four-fifths">
-        <div id="frozen-carousel" class="carousel results-carousel">
+        <div id="decomp-carousel" class="carousel results-carousel">
           <div class="item">
             <video poster="" autoplay controls muted loop playsinline height="100%">
-              <source src="./static/videos/selected/frozen_motion_000/scene01_step120000_frozen_motion_000.mp4" type="video/mp4">
+              <source src="./static/videos/selected/decomp_grid/scene01_decomp.mp4" type="video/mp4">
             </video>
           </div>
           <div class="item">
             <video poster="" autoplay controls muted loop playsinline height="100%">
-              <source src="./static/videos/selected/frozen_motion_000/scene02_step120000_frozen_motion_000.mp4" type="video/mp4">
+              <source src="./static/videos/selected/decomp_grid/scene02_decomp.mp4" type="video/mp4">
             </video>
           </div>
           <div class="item">
             <video poster="" autoplay controls muted loop playsinline height="100%">
-              <source src="./static/videos/selected/frozen_motion_000/scene05_step120000_frozen_motion_000.mp4" type="video/mp4">
+              <source src="./static/videos/selected/decomp_grid/scene03_decomp.mp4" type="video/mp4">
             </video>
           </div>
           <div class="item">
             <video poster="" autoplay controls muted loop playsinline height="100%">
-              <source src="./static/videos/selected/frozen_motion_000/scene06_step120000_frozen_motion_000.mp4" type="video/mp4">
+              <source src="./static/videos/selected/decomp_grid/scene05_decomp.mp4" type="video/mp4">
             </video>
           </div>
           <div class="item">
             <video poster="" autoplay controls muted loop playsinline height="100%">
-              <source src="./static/videos/selected/frozen_motion_000/scene15_step120000_frozen_motion_000.mp4" type="video/mp4">
+              <source src="./static/videos/selected/decomp_grid/scene15_decomp.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item">
+            <video poster="" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/selected/decomp_grid/scene16_decomp.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item">
+            <video poster="" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/selected/decomp_grid/scene19_decomp.mp4" type="video/mp4">
             </video>
           </div>
         </div>
@@ -414,6 +424,49 @@
     </script>
 
   </div>
+
+  <!-- Time Control (Frozen Motion) -->
+  <div class="container is-max-desktop" style="margin-top: 30px;">
+    <h3 class="title is-4 has-text-centered">Time Control (Frozen Motion)</h3>
+    <p class="content has-text-centered" style="margin-bottom: 15px;">
+      RehearsalNeRF allows independent time control over lighting and motion.
+    </p>
+  </div>
+
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <div id="frozen-carousel" class="carousel results-carousel">
+          <div class="item">
+            <video poster="" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/selected/frozen_motion_000/scene01_step120000_frozen_motion_000.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item">
+            <video poster="" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/selected/frozen_motion_000/scene02_step120000_frozen_motion_000.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item">
+            <video poster="" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/selected/frozen_motion_000/scene05_step120000_frozen_motion_000.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item">
+            <video poster="" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/selected/frozen_motion_000/scene06_step120000_frozen_motion_000.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item">
+            <video poster="" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/selected/frozen_motion_000/scene15_step120000_frozen_motion_000.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </section>
 
 
