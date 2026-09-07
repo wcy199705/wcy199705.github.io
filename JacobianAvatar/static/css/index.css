@@ -293,3 +293,5 @@ body {
 .qual-cell { text-align: center; }
 .qual-cell img, .qual-cell video { height: 230px; width: auto; max-width: 100%; object-fit: contain; border-radius: 6px; background: #fff; }
 .qual-missing { color: #999; font-size: 0.85em; }
+
+.qual-header .qual-span2 { grid-column: span 2; }
