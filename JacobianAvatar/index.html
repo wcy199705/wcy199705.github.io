@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="JacobianAvatar: Temporally Consistent Semi-rigid Avatar Reconstruction from a Monocular Video (ECCV 2026)">
+  <meta name="keywords" content="Avatar Reconstruction, Neural Jacobian Fields, Monocular Video, Temporal Consistency, Semi-rigid Deformation, 3D Gaussian Splatting">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JacobianAvatar</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css?v=20260907g">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+
+
+<!-- ===== Hero ===== -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">JacobianAvatar: Temporally Consistent Semi-rigid Avatar Reconstruction from a Monocular Video</h1>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Changyeon Won<sup>1</sup>,</span>
+            <span class="author-block">Min-Gyu Park<sup>2,3</sup>,</span>
+            <span class="author-block">Seonghwan Park<sup>2</sup>,</span>
+            <span class="author-block">Ju Hong Yoon<sup>2,3</sup>,</span>
+            <span class="author-block">Hae-Gon Jeon<sup>4&dagger;</sup></span>
+          </div>
+
+          <div class="is-size-6 publication-authors">
+            <span class="author-block"><sup>1</sup>GIST,</span>
+            <span class="author-block"><sup>2</sup>KETI,</span>
+            <span class="author-block"><sup>3</sup>polygom,</span>
+            <span class="author-block"><sup>4</sup>Yonsei University</span>
+          </div>
+          <div class="is-size-6 publication-authors" style="margin-top: 5px;">
+            <span class="author-block"><sup>&dagger;</sup>Corresponding author</span>
+          </div>
+
+          <div class="is-size-3 publication-authors" style="margin-top: 10px;">
+            <span class="author-block"><b>ECCV 2026</b></span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- arXiv -->
+              <span class="link-block">
+                <a href="https://arxiv.org/pdf/2606.31115"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Code (link to be added) -->
+              <span class="link-block">
+                <a href="#" onclick="return false;" title="Coming soon"
+                   class="external-link button is-normal is-rounded is-dark link-pending">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Code</span>
+                </a>
+              </span>
+              <!-- Poster -->
+              <span class="link-block">
+                <a href="./static/pdfs/jacobianavatar_poster.pdf"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-image"></i></span>
+                  <span>Poster</span>
+                </a>
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== Teaser ===== -->
+<section class="hero teaser">
+  <div class="container is-max-widescreen">
+    <div class="hero-body" style="padding-top: 10px;">
+      <video autoplay controls muted loop playsinline poster="./static/images/teaser.png" style="width: 100%; border-radius: 10px;">
+        <source src="./static/videos/teaser_concept.mp4?v=20260907c" type="video/mp4">
+      </video>
+      <h2 class="subtitle has-text-centered" style="margin-top: 15px;">
+        From a single video, <span class="dnerf">JacobianAvatar</span> reconstructs an avatar that captures clothing wrinkles while staying temporally stable.
+      </h2>
+      <img src="./static/images/teaser.png" alt="JacobianAvatar teaser: rendered color images (top) and normal maps (bottom) of an animated avatar over time" style="width: 100%; border-radius: 10px; margin-top: 24px;">
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== Abstract ===== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Generating realistic human avatars in complex motions&mdash;such as clothing dynamics&mdash;requires modeling of global and local deformations which remains challenging in monocular settings.
+            We address this problem by leveraging neural Jacobian fields (NJFs) for representing semi-rigid deformations.
+            We train self-supervised neural networks for predicting Jacobian matrices that give the pose-dependent deformations, by solving a Poisson equation.
+            However, monocular input presents several difficulties such as self-occluded regions and invisible surfaces.
+            To address these issues, we introduce three key components: a constrained Poisson solver, signed distance-based Jacobian regularization, and a deformation-guided residual flow loss, which together suppress boundary artifacts, recover frequently occluded regions such as armpits and thighs, and enforce temporal consistency during motion.
+            Experiments on benchmark and in-the-wild videos demonstrate that our method generates temporally stable and geometrically coherent avatars, outperforming state-of-the-art approaches.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== Method ===== -->
+<section class="section" id="method" style="padding-top: 0;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full">
+        <h2 class="title is-3">Method</h2>
+        <p class="method-lead">
+          A geometry branch and an appearance branch. From the initial mesh, an MLP predicts a Jacobian for every face,
+          a screened Poisson solver turns it into vertex displacements (coarse first, then fine), LBS poses the mesh, and 3D Gaussians on the faces render the avatar.
+        </p>
+        <img src="./static/images/pipeline.png?v=20260907c" alt="Overview of the JacobianAvatar pipeline: geometry branch with coarse and fine Jacobian fields and screened Poisson solvers, and appearance branch with mesh rasterizer and 3DGS rasterizer" style="width: 100%;">
+        <p class="method-lead" style="margin-top: 14px;">
+          <b>Coarse-to-fine Jacobian fields.</b> A coarse field on the canonical mesh $\mathcal{M}^c$ captures large deformations;
+          a fine field on the twice-subdivided mesh $\mathcal{M}^f$ adds wrinkles, taking the coarse feature $\mathbf{z}^c$ as extra input. Both are summed before LBS.
+        </p>
+      </div>
+    </div>
+
+    <!-- Mesh optimization (preprocessing) -->
+    <div class="method-block">
+      <h3 class="title is-4">Mesh optimization (preprocessing)</h3>
+      <p class="method-lead">
+        Refining the MHR template with a differentiable renderer based on previous work<sup>*</sup>, supervised by Sapiens normal maps and segmentation masks, lets the pipeline initially reconstruct avatars even in loose clothing. Heatmaps show the geometric updates.
+      </p>
+      <img class="fig-shrink" src="./static/images/fig_mesh_opt.png?v=20260907c" alt="Mesh optimization: MHR template, updated mesh, and final avatar for a subject in loose clothing, with heatmaps of the geometric updates">
+      <p class="fig-cite"><sup>*</sup> Large Steps in Inverse Rendering of Geometry (Nicolet et al., SIGGRAPH Asia 2021).</p>
+    </div>
+
+    <!-- Preliminary: Neural Jacobian Fields -->
+    <div class="method-block">
+      <h3 class="title is-4">Preliminary: Neural Jacobian Fields (NJF)</h3>
+      <p class="method-lead">
+        In neural Jacobian fields (NJF), the Jacobian $J_i$ is the gradient of the deformation map on each face: instead of predicting where the vertices go, the network predicts how every triangle stretches, rotates, and shears.
+        Given the Jacobian field, the deformation map $\Phi^*$ is recovered by solving a Poisson equation.
+      </p>
+      <img class="fig-w40" src="./static/images/fig_njf.png?v=20260907i" alt="Neural Jacobian fields: per-face Jacobians on the canonical mesh are integrated by a Poisson solver into the deformation map">
+      <div class="eq-box">
+        $$\Phi^* = \arg\min_{\Phi}\ \sum_{a_i \in \mathcal{F}} |a_i|\,\big\|\nabla_i(\Phi) - J_i\big\|_2^2$$
+      </div>
+    </div>
+
+    <!-- Component 1: Screened Poisson -->
+    <div class="method-block">
+      <h3 class="title is-4"><span class="method-index">1</span>Screened Poisson solver</h3>
+      <p class="method-lead">
+        Occluded and never-observed surfaces get no constraint in the standard Poisson solver, so the mesh stretches.
+        A screening term keeps the deformed vertices close to their canonical positions $\mathcal{V}$.
+      </p>
+      <img class="fig-w62" src="./static/images/fig_screened.png?v=20260907c" alt="Without the screening term the deformed mesh collapses under the arm and inner thigh; ours stays intact">
+      <div class="eq-box eq-large">
+        $$\Phi^* = \arg\min_{\Phi}\
+        \underbrace{\sum_{a_i \in \mathcal{F}} |a_i|\,\big\|\nabla_i(\Phi) - J_i\big\|_2^2}_{\textstyle\text{previous Poisson solver (NJF)}}
+        \;+\;
+        \underbrace{{\color{#d0342c}\lambda_{\Phi}\,\big\|\Phi - \mathcal{V}\big\|_2^2}}_{\textstyle{\color{#d0342c}\text{screening term (ours)}}}$$
+      </div>
+    </div>
+
+    <!-- Component 2: Novel Regularizers (SDF + residual flow) -->
+    <div class="method-block">
+      <h3 class="title is-4"><span class="method-index">2</span>Novel Regularizers</h3>
+      <p class="method-lead">
+        <b>SDF-based regularizer.</b> An SDF voxel grid built from the initial mesh gives normals $\hat{\mathbf{n}}_{\mathrm{SDF}}$; aligning the deformed avatar's normals to them keeps the global shape intact in rarely seen, articulated regions such as the armpits.<br>
+        <b>Deformation-guided residual flow loss.</b> The LBS motion between frames $t-1$ and $t$ is projected into a displacement map $\mathbf{W}^t$, refined by a pretrained optical-flow network, and only the residual is minimized, which keeps the deformation temporally consistent.
+      </p>
+      <div class="columns is-vcentered">
+        <div class="column is-half has-text-centered">
+          <img class="fig-pair" src="./static/images/fig_sdf.png?v=20260907c" alt="An SDF voxel grid built from the initial mesh; normals of the deformed canonical avatar are aligned to the SDF gradient">
+          <p class="fig-label">SDF-based regularizer</p>
+        </div>
+        <div class="column is-half has-text-centered">
+          <img class="fig-pair" src="./static/images/fig_residual.png?v=20260907c" alt="Displacement of LBS between consecutive frames is refined by a pretrained optical flow network; only the residual is minimized">
+          <p class="fig-label">Deformation-guided residual flow loss</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ===== Results (to be filled in) =====
+     Planned blocks, see docs/superpowers/specs/2026-09-06-project-page-design.md:
+       - Per-dataset carousels (MonoPerfCap, NeuMan): GT | Mesh | Normal | 3DGS
+       - Interactive viewer: subject buttons x {train/novel, canonical, 360 orbit}
+       - Quantitative tables (MonoPerfCap, DNA-Rendering, SynWild)
+       - Qualitative comparison figures
+       - Ablation
+     Videos go under ./static/videos/.
+-->
+
+
+<!-- ===== Qualitative Results ===== -->
+<section class="section" id="qualitative" style="padding-top: 0;">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Qualitative Results</h2>
+    <div class="method-block" style="border-top: none; margin-top: 10px; padding-top: 0;">
+      <p class="method-lead">
+        For each scene: the ground-truth frame of a novel pose, the canonical avatar (mesh and normal map) and the posed avatar (mesh and normal map).
+      </p>
+      <div class="qual-grid">
+        <div class="qual-row qual-header">
+          <div class="qual-cell">Ground Truth</div>
+          <div class="qual-cell">Canonical Mesh</div>
+          <div class="qual-cell">Canonical Normal</div>
+          <div class="qual-cell">Posed Mesh</div>
+          <div class="qual-cell">Posed Normal</div>
+        </div>
+        <div class="qual-row">
+          <div class="qual-cell"><img src="./static/images/qual/Helge_gt.jpg" alt="Helge (MonoPerfCap) ground truth"></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Helge_canon_mesh.webm" type="video/webm"><source src="./static/videos/qual/Helge_canon_mesh.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Helge_canon_normal.webm" type="video/webm"><source src="./static/videos/qual/Helge_canon_normal.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Helge_posed_mesh.webm" type="video/webm"><source src="./static/videos/qual/Helge_posed_mesh.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Helge_posed_normal.webm" type="video/webm"><source src="./static/videos/qual/Helge_posed_normal.mp4" type="video/mp4"></video></div>
+        </div>
+        <div class="qual-row">
+          <div class="qual-cell"><img src="./static/images/qual/Natalia_gt.jpg" alt="Natalia (MonoPerfCap) ground truth"></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Natalia_canon_mesh.webm" type="video/webm"><source src="./static/videos/qual/Natalia_canon_mesh.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Natalia_canon_normal.webm" type="video/webm"><source src="./static/videos/qual/Natalia_canon_normal.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Natalia_posed_mesh.webm" type="video/webm"><source src="./static/videos/qual/Natalia_posed_mesh.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Natalia_posed_normal.webm" type="video/webm"><source src="./static/videos/qual/Natalia_posed_normal.mp4" type="video/mp4"></video></div>
+        </div>
+        <div class="qual-row">
+          <div class="qual-cell"><img src="./static/images/qual/Oleks_studio_gt.jpg" alt="Oleks studio (MonoPerfCap) ground truth"></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Oleks_studio_canon_mesh.webm" type="video/webm"><source src="./static/videos/qual/Oleks_studio_canon_mesh.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Oleks_studio_canon_normal.webm" type="video/webm"><source src="./static/videos/qual/Oleks_studio_canon_normal.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Oleks_studio_posed_mesh.webm" type="video/webm"><source src="./static/videos/qual/Oleks_studio_posed_mesh.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Oleks_studio_posed_normal.webm" type="video/webm"><source src="./static/videos/qual/Oleks_studio_posed_normal.mp4" type="video/mp4"></video></div>
+        </div>
+        <div class="qual-row">
+          <div class="qual-cell"><img src="./static/images/qual/Weipeng_gt.jpg" alt="Weipeng (MonoPerfCap) ground truth"></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Weipeng_canon_mesh.webm" type="video/webm"><source src="./static/videos/qual/Weipeng_canon_mesh.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Weipeng_canon_normal.webm" type="video/webm"><source src="./static/videos/qual/Weipeng_canon_normal.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Weipeng_posed_mesh.webm" type="video/webm"><source src="./static/videos/qual/Weipeng_posed_mesh.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Weipeng_posed_normal.webm" type="video/webm"><source src="./static/videos/qual/Weipeng_posed_normal.mp4" type="video/mp4"></video></div>
+        </div>
+        <div class="qual-row">
+          <div class="qual-cell"><img src="./static/images/qual/Neuman_bike_gt.jpg" alt="bike (NeuMan) ground truth"></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Neuman_bike_canon_mesh.webm" type="video/webm"><source src="./static/videos/qual/Neuman_bike_canon_mesh.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Neuman_bike_canon_normal.webm" type="video/webm"><source src="./static/videos/qual/Neuman_bike_canon_normal.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Neuman_bike_posed_mesh.webm" type="video/webm"><source src="./static/videos/qual/Neuman_bike_posed_mesh.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Neuman_bike_posed_normal.webm" type="video/webm"><source src="./static/videos/qual/Neuman_bike_posed_normal.mp4" type="video/mp4"></video></div>
+        </div>
+        <div class="qual-row">
+          <div class="qual-cell"><img src="./static/images/qual/Neuman_citron_gt.jpg" alt="citron (NeuMan) ground truth"></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Neuman_citron_canon_mesh.webm" type="video/webm"><source src="./static/videos/qual/Neuman_citron_canon_mesh.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Neuman_citron_canon_normal.webm" type="video/webm"><source src="./static/videos/qual/Neuman_citron_canon_normal.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Neuman_citron_posed_mesh.webm" type="video/webm"><source src="./static/videos/qual/Neuman_citron_posed_mesh.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Neuman_citron_posed_normal.webm" type="video/webm"><source src="./static/videos/qual/Neuman_citron_posed_normal.mp4" type="video/mp4"></video></div>
+        </div>
+        <div class="qual-row">
+          <div class="qual-cell"><img src="./static/images/qual/Neuman_jogging_gt.jpg" alt="jogging (NeuMan) ground truth"></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Neuman_jogging_canon_mesh.webm" type="video/webm"><source src="./static/videos/qual/Neuman_jogging_canon_mesh.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Neuman_jogging_canon_normal.webm" type="video/webm"><source src="./static/videos/qual/Neuman_jogging_canon_normal.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Neuman_jogging_posed_mesh.webm" type="video/webm"><source src="./static/videos/qual/Neuman_jogging_posed_mesh.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Neuman_jogging_posed_normal.webm" type="video/webm"><source src="./static/videos/qual/Neuman_jogging_posed_normal.mp4" type="video/mp4"></video></div>
+        </div>
+        <div class="qual-row">
+          <div class="qual-cell"><img src="./static/images/qual/Neuman_seattle_gt.jpg" alt="seattle (NeuMan) ground truth"></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Neuman_seattle_canon_mesh.webm" type="video/webm"><source src="./static/videos/qual/Neuman_seattle_canon_mesh.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Neuman_seattle_canon_normal.webm" type="video/webm"><source src="./static/videos/qual/Neuman_seattle_canon_normal.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Neuman_seattle_posed_mesh.webm" type="video/webm"><source src="./static/videos/qual/Neuman_seattle_posed_mesh.mp4" type="video/mp4"></video></div>
+          <div class="qual-cell"><video autoplay muted loop playsinline preload="metadata"><source src="./static/videos/qual/Neuman_seattle_posed_normal.webm" type="video/webm"><source src="./static/videos/qual/Neuman_seattle_posed_normal.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== Experimental Comparison ===== -->
+<section class="section" id="comparison" style="padding-top: 0;">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Experimental Comparison</h2>
+
+    <div class="method-block" style="border-top: none; margin-top: 10px; padding-top: 0;">
+      <h3 class="title is-4">Geometry Quality</h3>
+      <p class="method-lead">
+        Compared methods suffer from texture-copying artifacts on the geometry, whereas our method recovers smooth surfaces in textured regions and sharp wrinkles.
+      </p>
+      <img class="fig-w80" src="./static/images/fig_qual_normal.png" alt="Qualitative comparison of rendered normal maps on SynWild against Vid2Avatar, LSAvatar and FacAvatar">
+    </div>
+
+    <div class="method-block">
+      <h3 class="title is-4">Rendering Quality</h3>
+      <p class="method-lead">
+        Qualitative comparison of rendering quality with state-of-the-art methods on the MonoPerfCap dataset. Ours shows sharper textures from side views.
+      </p>
+      <img src="./static/images/fig_qual_monoperfcap.png" alt="Qualitative comparison of rendering quality on MonoPerfCap against ExAvatar, Vid2Avatar, GoMAvatar, LSAvatar and FacAvatar">
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ===== BibTeX ===== -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@inproceedings{won2026jacobianavatar,
+  title     = {JacobianAvatar: Temporally Consistent Semi-rigid Avatar Reconstruction from a Monocular Video},
+  author    = {Won, Changyeon and Park, Min-Gyu and Park, Seonghwan and Yoon, Ju Hong and Jeon, Hae-Gon},
+  booktitle = {European Conference on Computer Vision (ECCV)},
+  year      = {2026}
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            The website template is borrowed from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
