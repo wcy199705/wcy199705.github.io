@@ -23,3 +23,11 @@ $(document).ready(function () {
     bulmaSlider.attach();
   }
 });
+
+// Qualitative Results: play the orbit clips 1.3x faster (applies to webm and mp4 alike).
+$(document).ready(function () {
+  document.querySelectorAll('.qual-grid video').forEach(function (v) {
+    v.playbackRate = 1.3;
+    v.addEventListener('loadedmetadata', function () { v.playbackRate = 1.3; });
+  });
+});
